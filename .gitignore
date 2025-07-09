@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -32,17 +31,4 @@ db.sqlite3
 *.sw?
 
 # Environment
-=======
-
-__pycache__/
-*.py[cod]
-
-venv/
-
-db.sqlite3
-
-
-.vscode/
-
->>>>>>> 52dd3ed4 (first commit)
 .env
