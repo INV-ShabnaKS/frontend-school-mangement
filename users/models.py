@@ -54,7 +54,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             self.role = self.role.title()
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # calls clean() before saving
+        self.full_clean()  
         super().save(*args, **kwargs)
 
 
