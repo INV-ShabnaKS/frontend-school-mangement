@@ -62,7 +62,7 @@ const Login = () => {
                         error={!!errors.password}
                         helperText={errors.password?.message}/>
 
-                    <Button type="submit" variant="contained" color="primary" fullWidth>Login</Button>
+                    <Button type="submit" variant="contained" fullWidth sx={{backgroundColor:"#080808"}}>Login</Button>
                 </form>
             </Paper>
         </Container>

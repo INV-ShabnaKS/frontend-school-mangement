@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access');
     const username = localStorage.getItem('username');
     const role = localStorage.getItem('role');
     return token ? { token, username, role } : null;
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
       const { access, username: uname, role } = response.data;
 
-      localStorage.setItem('token', access);
+      localStorage.setItem('access', access);
       localStorage.setItem('username', uname);
       localStorage.setItem('role', role);
 
