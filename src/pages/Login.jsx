@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import {Box,Button,TextField,Typography,Container,Paper,} from "@mui/material";
+import { Link } from 'react-router-dom';
+
 
 
 
@@ -64,6 +66,10 @@ const Login = () => {
 
                     <Button type="submit" variant="contained" fullWidth sx={{backgroundColor:"#080808"}}>Login</Button>
                 </form>
+                <Typography variant="body2" align="right" >
+                    <Link to="/forgot-password" sx={{color:"black"}}>Forgot Password?</Link>
+                </Typography>
+
             </Paper>
         </Container>
     );
