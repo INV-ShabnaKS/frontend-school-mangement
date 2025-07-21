@@ -66,9 +66,8 @@ class RequestPasswordResetEmail(APIView):
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = PasswordResetTokenGenerator().make_token(user)
 
-        reset_url = request.build_absolute_uri(
-            reverse('password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
-        )
+        reset_url = f"http://localhost:5173/reset-password/{uidb64}/{token}"
+
 
         email_subject = "Reset your password"
         email_body = f"Hi {user.username},\nUse the link below to reset your password:\n{reset_url}"
