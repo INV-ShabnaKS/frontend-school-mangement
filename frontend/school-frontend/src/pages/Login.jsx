@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 const Login = () => {
     const {
         register,
-        handleSubmit,
+        handleSubmit,reset, 
         formState : {errors}
     } = useForm();
    
@@ -23,6 +23,7 @@ const Login = () => {
         const result = await login(data.username, data.password);
 
         if (result.success) {
+            reset();
             navigate("/dashboard");
         } else {
             alert(result.message);
@@ -39,11 +40,12 @@ const Login = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Login
                 </Typography>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)}autoComplete="off">
                     <TextField
                         label="Username"
                         fullWidth
                         margin="normal"
+                        autoComplete="off"
                         {...register("username", { required: "Username is required" })}
                         error={!!errors.username}
                         helperText={errors.username?.message}
@@ -54,6 +56,7 @@ const Login = () => {
                         type="password"
                         fullWidth
                         margin="normal"
+                        autoComplete="new-password"
                         {...register("password", {
                             required: "Password is required",
                             minLength: {

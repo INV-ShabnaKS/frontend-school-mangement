@@ -6,6 +6,7 @@ import CSVImport from '../components/csv';
 
 
 
+
 const StudentsPage = () => {
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -70,7 +71,8 @@ const StudentsPage = () => {
       <button onClick={() => setShowAddForm(!showAddForm)} style={{ marginBottom: '1rem' }}>
         {showAddForm ? 'Cancel' : 'Add Student'}
       </button>
-      <CSVImport onUploadSuccess={() => fetchStudents(currentUrl)} />
+      <CSVImport onUpload={() => {setCurrentUrl('/students/');
+        fetchStudents('/students/');}} />
 
 
     
@@ -85,8 +87,15 @@ const StudentsPage = () => {
           <input {...register('phone_number')} placeholder="Phone Number" required />
           <input {...register('roll_number')} placeholder="Roll Number" required />
           <input {...register('student_class')} placeholder="Class (e.g. 8A)" required />
-          <input {...register('date_of_birth')} type="date" placeholder="Date of Birth" required />
-          <input {...register('admission_date')} type="date" placeholder="Admission Date" required />
+          <div style={{ marginBottom: '1rem' }}>
+            <label htmlFor="dob">Date of Birth</label><br />
+            <input id="dob"{...register('date_of_birth')}type="date" required/>
+          </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Admission Date</label><br />
+            <input id="admission" {...register('admission_date')} type="date" required/>
+          </div>
+
           <select {...register('status')} required>
             <option value="">Select Status</option>
             <option value="Active">Active</option>

@@ -4,11 +4,35 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 
+
+
 const drawerWidth = 240;
 
 const DashboardLayout = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { auth } = useAuth();
+  const role = auth?.role; 
+  const teacherLinks = [
+    { to: "/dashboard/students", label: "Students" },
+    { to: "/exams/create",      label: "Create Exam" },
+  ];
+  const studentLinks = [
+    { to: "/dashboard/exams",             label: "Exams" },
+    { to: "/dashboard/profile", label: "My Details" },
+  ];
+  const adminLinks = [
+    { to: "/dashboard/teachers", label: "Teachers" },
+    { to: "/dashboard/students", label: "Students" },
+  ];
+
+  let links = [];
+  if (role === "Admin") links = adminLinks;
+  else if (role === "Teacher") links = teacherLinks;
+  else if (role === "Student") links = studentLinks;
+
+         
+
 
   const handleLogout = () => {
     logout();         
@@ -42,15 +66,15 @@ const DashboardLayout = () => {
       >
         <Toolbar />
         <List>
-          <ListItemButton component={Link} to="/dashboard/teachers">
-            <ListItemText primary="Teachers" />
-          </ListItemButton>
-          <ListItemButton component={Link} to="/dashboard/students">
-            <ListItemText primary="Students" />
-          </ListItemButton>
+          {links.map(({ to, label }) => (
+            <ListItemButton key={label} component={Link} to={to}>
+              <ListItemText primary={label} />
+            </ListItemButton>))}
+
           <ListItemButton onClick={handleLogout}>
             <ListItemText primary="Logout" />
           </ListItemButton>
+
 
         </List>
       </Drawer>

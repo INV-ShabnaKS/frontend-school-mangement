@@ -9,6 +9,14 @@ import { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import ProtectedExamCreate from "./pages/ExamCreate";
+import Student from "./pages/Student";
+import AddQuestion from "./pages/AddQuestion";
+import StudentExam from "./pages/StudentExam";
+import ExamPerform from "./pages/ExamPerform";
+
+
+
 
 
 
@@ -25,7 +33,14 @@ const App = () => {
             <Route index element={<DashboardHome />} />
             <Route path="teachers" element={<TeachersPage />} />
             <Route path="students" element={<StudentsPage />} />
+            <Route path="profile" element={<Student />} />
           </Route>
+          <Route path="/exams/create" element={<ProtectedExamCreate />} />
+          <Route path="/exams/:examId/questions" element={<AddQuestion />} />
+          <Route path="/dashboard/exams" element={<StudentExam />} />
+          <Route path="/dashboard/exams/:examId/start" element={<ExamPerform />} />
+
+
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
   );
