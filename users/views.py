@@ -10,6 +10,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+<<<<<<< HEAD
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -19,6 +20,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
+=======
+>>>>>>> 52dd3ed4 (first commit)
 
 '''class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -49,6 +52,7 @@ class LogoutView(APIView):
         except Exception as e:
             return Response({"error": "Invalid refresh token"}, status=status.HTTP_400_BAD_REQUEST)
 
+<<<<<<< HEAD
 
 class RequestPasswordResetEmail(APIView):
     permission_classes = [AllowAny]
@@ -99,3 +103,5 @@ class PasswordResetConfirmView(APIView):
         user.save()
 
         return Response({"message": "Password has been reset successfully"}, status=200)
+=======
+>>>>>>> 52dd3ed4 (first commit)

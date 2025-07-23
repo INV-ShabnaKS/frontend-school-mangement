@@ -35,7 +35,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     username= models.CharField(max_length=150, unique=True)
     email= models.EmailField(unique=True)
+<<<<<<< HEAD
     phone_number = models.CharField(max_length=15, null=True, blank=True)
+=======
+    phone_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
+>>>>>>> 52dd3ed4 (first commit)
     role= models.CharField(max_length=10, choices=ROLE_CHOICES)
     is_active= models.BooleanField(default=True)
     is_staff= models.BooleanField(default=False)
@@ -54,7 +58,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             self.role = self.role.title()
 
     def save(self, *args, **kwargs):
+<<<<<<< HEAD
         self.full_clean()  
+=======
+        self.full_clean()  # calls clean() before saving
+>>>>>>> 52dd3ed4 (first commit)
         super().save(*args, **kwargs)
 
 

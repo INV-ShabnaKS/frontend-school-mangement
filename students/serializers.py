@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Student
 from users.models import CustomUser
+<<<<<<< HEAD
 from django.core.validators import RegexValidator
 from datetime import date
 from django.contrib.auth.password_validation import validate_password
@@ -25,10 +26,17 @@ class StudentSerializer(serializers.ModelSerializer):
         except DjangoValidationError as e:
             raise serializers.ValidationError(e.messages)
         return value
+=======
+
+class StudentSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    username = serializers.CharField(source='user.username',write_only=True)
+>>>>>>> 52dd3ed4 (first commit)
 
 
     class Meta:
         model = Student
+<<<<<<< HEAD
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'phone_number',
                   'roll_number', 'student_class', 'date_of_birth', 'admission_date',
                   'status', 'assigned_teacher', 'password']
@@ -56,6 +64,20 @@ class StudentSerializer(serializers.ModelSerializer):
         phone_number = user_data.get('phone_number')
 
         if CustomUser.objects.filter(username=username).exists():
+=======
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number',
+                  'roll_number', 'student_class', 'date_of_birth', 'admission_date',
+                  'status', 'assigned_teacher', 'password']
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        username = validated_data.get('username')  
+        print("usernaem", username)
+        email = validated_data.get('email')
+
+        if CustomUser.objects.filter(username=username).exists():
+            print("bla")
+>>>>>>> 52dd3ed4 (first commit)
             raise serializers.ValidationError({'username': 'This username is already taken.'})
         if CustomUser.objects.filter(email=email).exists():
             raise serializers.ValidationError({'email': 'This email is already registered.'})
@@ -63,7 +85,10 @@ class StudentSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(
             username=username,
             email=email,
+<<<<<<< HEAD
             phone_number=phone_number,
+=======
+>>>>>>> 52dd3ed4 (first commit)
             password=password,
             role='Student'
         )
@@ -71,6 +96,7 @@ class StudentSerializer(serializers.ModelSerializer):
         student = Student.objects.create(user=user, **validated_data)
         return student
 
+<<<<<<< HEAD
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
         user = instance.user
@@ -94,3 +120,6 @@ class StudentSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+=======
+
+>>>>>>> 52dd3ed4 (first commit)

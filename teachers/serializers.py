@@ -2,10 +2,13 @@ from rest_framework import serializers
 from .models import Teacher
 from users.models import CustomUser
 from django.core.validators import RegexValidator
+<<<<<<< HEAD
 from datetime import date
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 
+=======
+>>>>>>> 52dd3ed4 (first commit)
 
 phone_validator = RegexValidator(
     regex=r'^\d{10}$',
@@ -13,6 +16,7 @@ phone_validator = RegexValidator(
 )
 
 class TeacherSerializer(serializers.ModelSerializer):
+<<<<<<< HEAD
     username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
     email = serializers.EmailField(source='user.email')
@@ -30,6 +34,16 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'username',
+=======
+    username = serializers.CharField(write_only=True) 
+    password = serializers.CharField(write_only=True)
+    phone_number = serializers.CharField(validators=[phone_validator])
+
+    class Meta:
+        model = Teacher
+        fields = [
+            'username',            
+>>>>>>> 52dd3ed4 (first commit)
             'first_name',
             'last_name',
             'email',
@@ -41,6 +55,7 @@ class TeacherSerializer(serializers.ModelSerializer):
             'password',
         ]
 
+<<<<<<< HEAD
     def validate(self, data):
         email = data.get('user', {}).get('email')
         username = data.get('username')
@@ -120,3 +135,19 @@ class TeacherSerializer(serializers.ModelSerializer):
 
         return instance
 
+=======
+    def create(self, validated_data):
+        uname = validated_data.pop('username')
+        pwd   = validated_data.pop('password')
+        teacher = Teacher.objects.create(**validated_data)
+
+       
+        CustomUser.objects.create_user(
+            username=uname,
+            email=teacher.email,
+            password=pwd,
+            role='Teacher'
+        )
+
+        return teacher
+>>>>>>> 52dd3ed4 (first commit)
