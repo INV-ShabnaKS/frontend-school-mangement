@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const drawerWidth = 240;
+const drawerWidth = 100;
 
 const DashboardLayout = () => {
   const { logout } = useAuth();
@@ -15,7 +15,7 @@ const DashboardLayout = () => {
   const role = auth?.role; 
   const teacherLinks = [
     { to: "/dashboard/students", label: "Students" },
-    { to: "/exams/create",      label: "Create Exam" },
+    { to: "/dashboard/exams/create",      label: "Create Exam" },
   ];
   const studentLinks = [
     { to: "/dashboard/exams",             label: "Exams" },

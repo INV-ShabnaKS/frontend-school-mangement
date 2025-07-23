@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import api from '../api/axios';
 
 const TeachersPage = () => {
@@ -6,23 +7,12 @@ const TeachersPage = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    username: '',
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone_number: '',
-    employee_id: '',
-    subject_specialization: '',
-    date_of_joining: '',
-    status: '',
-    password: ''
-  });
+  const { register, handleSubmit, reset } = useForm();
 
   const fetchTeachers = async () => {
     try {
       const res = await api.get('/teachers/');
-      setTeachers(res.data.results || res.data); // depends on pagination
+      setTeachers(res.data.results || res.data);
     } catch (err) {
       console.error(err);
       setError('Failed to load teachers');
@@ -37,18 +27,14 @@ const TeachersPage = () => {
     setSelectedTeacher(teacher);
   };
 
-  const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      await api.post('/teachers/', formData);
+      await api.post('/teachers/', data);
+      reset();
       setShowForm(false);
-      fetchTeachers(); 
+      fetchTeachers();
     } catch (err) {
-      console.error(err.response?.data);
+      console.error(err.response?.data || err.message);
       setError('Failed to add teacher');
     }
   };
@@ -56,25 +42,33 @@ const TeachersPage = () => {
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Teachers List</h2>
+
       <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: '1rem' }}>
         {showForm ? 'Cancel' : 'Add Teacher'}
       </button>
 
       {showForm && (
-        <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
-          {[
-            "username", "first_name", "last_name", "email", "phone_number",
-            "employee_id", "subject_specialization", "date_of_joining", "status", "password"
-          ].map((field) => (
-            <input
-              key={field}
-              name={field}
-              placeholder={field.replace(/_/g, ' ')}
-              type={field === 'password' ? 'password' : 'text'}
-              onChange={handleChange}
-              required
-            />
-          ))}
+        <form onSubmit={handleSubmit(onSubmit)} style={{ marginBottom: '2rem' }}>
+          <input {...register('username')} placeholder="Username" required />
+          <input {...register('first_name')} placeholder="First Name" required />
+          <input {...register('last_name')} placeholder="Last Name" required />
+          <input {...register('email')} type="email" placeholder="Email" required />
+          <input {...register('phone_number')} placeholder="Phone Number" required />
+          <input {...register('employee_id')} placeholder="Employee ID" required />
+          <input {...register('subject_specialization')} placeholder="Subject Specialization" required />
+
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Date of Joining</label><br />
+            <input {...register('date_of_joining')} type="date" required />
+          </div>
+
+          <select {...register('status')} required>
+            <option value="">Select Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+
+          <input {...register('password')} type="password" placeholder="Password" required />
           <button type="submit">Submit</button>
         </form>
       )}

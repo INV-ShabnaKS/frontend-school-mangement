@@ -6,7 +6,7 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  Button
+  Button,
 } from "@mui/material";
 import api from "../api/axios";
 import roleHoc from "../hoc/roleHoc";
@@ -18,52 +18,35 @@ const ExamPerform = () => {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [score, setScore] = useState(null);
+  const [score, setScore] = useState(null); // ✅ to store result
   const [timer, setTimer] = useState(300);
   const [loading, setLoading] = useState(true);
 
-  // Load exam on mount
   useEffect(() => {
     const init = async () => {
       try {
-        const scoreRes = await api.get(`/student-score?exam_id=${examId}`);
+        await api.post(`/exams/start/${examId}/`);
+      } catch (err) {
+        // It’s okay if already started
+      }
+
+      try {
         const questionsRes = await api.get(`/exams/questions/?exam=${examId}`);
         const qdata = Array.isArray(questionsRes.data)
           ? questionsRes.data
           : questionsRes.data.results || [];
 
-        setScore(scoreRes.data);
         setQuestions(qdata);
-        setSubmitted(true);
         setLoading(false);
       } catch (err) {
-        if (err.response?.status === 404) {
-          // Not submitted → start the exam
-          try {
-            await api.post(`/exams/start/${examId}/`);
-            const questionsRes = await api.get(`/exams/questions/?exam=${examId}`);
-            const qdata = Array.isArray(questionsRes.data)
-              ? questionsRes.data
-              : questionsRes.data.results || [];
-
-            setQuestions(qdata);
-            setSubmitted(false);
-            setLoading(false);
-          } catch (startErr) {
-            console.error("Failed to start exam:", startErr);
-            setLoading(false);
-          }
-        } else {
-          console.error("Unexpected error:", err);
-          setLoading(false);
-        }
+        console.error("Failed to load questions:", err);
+        setLoading(false);
       }
     };
 
     init();
   }, [examId]);
 
-  // Timer logic
   useEffect(() => {
     if (submitted) return;
 
@@ -75,70 +58,66 @@ const ExamPerform = () => {
     const interval = setInterval(() => {
       setTimer((prev) => prev - 1);
     }, 1000);
+
     return () => clearInterval(interval);
   }, [timer, submitted]);
 
-  // Select option
   const handleOptionSelect = (qid, val) => {
-    const updated = { ...answers, [qid]: val };
-    setAnswers(updated);
-    localStorage.setItem(`exam-${examId}-answers`, JSON.stringify(updated));
+    setAnswers((prev) => ({ ...prev, [qid]: val }));
   };
 
-  // Submit exam
   const handleSubmit = async (expired = false) => {
     const payload = Object.entries(answers).map(([qid, selected_answer]) => ({
       question: qid,
-      selected_answer
+      selected_answer,
     }));
 
     try {
       const res = await api.post("/exams/submit-answer/", payload);
+
       setScore({
-        ...res.data,
         message: expired
           ? "Time is up. Your exam was auto-submitted."
-          : res.data.message
+          : res.data.message,
+        total: res.data.total_attempted,
+        correct: res.data.correct_answers,
+        marks: res.data.score,
       });
+
       setSubmitted(true);
-      localStorage.removeItem(`exam-${examId}-answers`);
     } catch (err) {
       console.error("Submit failed", err);
     }
   };
 
-  // Loading state
+  const q = questions?.[currentQ];
+  const time = `${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, "0")}`;
+
   if (loading) return <Typography p={2}>Loading exam...</Typography>;
 
-  // Review screen if already submitted
   if (submitted) {
     return (
       <Box maxWidth={800} mx="auto" p={2}>
-        <Typography variant="h5">{score?.message || "Exam already submitted."}</Typography>
-        <Typography>Score: {score?.score}</Typography>
-        <Typography>Correct: {score?.correct_answers}</Typography>
-        <Typography>Attempted: {score?.total_attempted}</Typography>
-
-        <Typography variant="h6" mt={4}>Your Answers</Typography>
-        {questions.map((q, i) => (
-          <Box key={q.id} mt={2} p={2} border="1px solid #ccc" borderRadius={2}>
-            <Typography><strong>Q{i + 1}:</strong> {q.text}</Typography>
-            <Typography>A. {q.option_a}</Typography>
-            <Typography>B. {q.option_b}</Typography>
-            <Typography>C. {q.option_c}</Typography>
-            <Typography>D. {q.option_d}</Typography>
-            <Typography sx={{ mt: 1 }} color="primary">
-              Your Answer: {answers[q.id] || "Not Answered"}
-            </Typography>
+        <Typography variant="h5" color="success.main">Exam Submitted Successfully!</Typography>
+        {score && (
+          <Box mt={2}>
+            <Typography>{score.message}</Typography>
+            <Typography>Score: {score.marks}</Typography>
+            <Typography>Correct Answers: {score.correct}</Typography>
+            <Typography>Total Attempted: {score.total}</Typography>
           </Box>
-        ))}
+        )}
       </Box>
     );
   }
 
-  // Live exam screen
-  const q = questions[currentQ];
-  const time = `${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, "0")}`;
+  if (!q) {
+    return (
+      <Box maxWidth={800} mx="auto" p={2}>
+        <Typography color="error">Unable to display this question.</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box maxWidth={800} mx="auto" p={2}>

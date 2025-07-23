@@ -34,11 +34,14 @@ const App = () => {
             <Route path="teachers" element={<TeachersPage />} />
             <Route path="students" element={<StudentsPage />} />
             <Route path="profile" element={<Student />} />
+            <Route path="exams/create" element={<ProtectedExamCreate />} />
+            <Route path="exams/:examId/questions" element={<AddQuestion />} />
+            <Route path="exams" element={<StudentExam />} />
+            <Route path="exams/:examId/start" element={<ExamPerform />} />  
           </Route>
-          <Route path="/exams/create" element={<ProtectedExamCreate />} />
-          <Route path="/exams/:examId/questions" element={<AddQuestion />} />
-          <Route path="/dashboard/exams" element={<StudentExam />} />
-          <Route path="/dashboard/exams/:examId/start" element={<ExamPerform />} />
+          
+          
+          
 
 
           <Route path="*" element={<Navigate to="/login" />} />

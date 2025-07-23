@@ -15,6 +15,9 @@ const StudentsPage = () => {
   const [prevPage, setPrevPage] = useState(null);
   const [currentUrl, setCurrentUrl] = useState('/students/');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const role = localStorage.getItem('role'); 
+
 
   const { register, handleSubmit, reset } = useForm();
   
@@ -137,11 +140,16 @@ const StudentsPage = () => {
       {selectedStudent && (
         <div style={{ marginTop: '2rem', borderTop: '1px solid #ddd', paddingTop: '1rem' }}>
           <h3>Student Details</h3>
+          <p><strong>ID:</strong> {selectedStudent.id}</p>
           <p><strong>Name:</strong> {selectedStudent.first_name} {selectedStudent.last_name}</p>
           <p><strong>Email:</strong> {selectedStudent.email}</p>
           <p><strong>Phone:</strong> {selectedStudent.phone_number}</p>
+          <p><strong>Roll no:</strong> {selectedStudent.roll_number}</p>
           <p><strong>Class:</strong> {selectedStudent.student_class}</p>
+          <p><strong>Date of Birth:</strong> {selectedStudent.date_of_birth}</p>
+          <p><strong>Admission Date:</strong> {selectedStudent.admission_date}</p>
           <p><strong>Status:</strong> {selectedStudent.status}</p>
+          <p><strong>Assigned teacher ID:</strong> {selectedStudent.assigned_teacher}</p>
         </div>
       )}
     </div>
