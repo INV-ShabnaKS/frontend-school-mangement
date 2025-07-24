@@ -2,13 +2,9 @@ from rest_framework import serializers
 from .models import Teacher
 from users.models import CustomUser
 from django.core.validators import RegexValidator
-<<<<<<< HEAD
 from datetime import date
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
-
-=======
->>>>>>> 52dd3ed4 (first commit)
 
 phone_validator = RegexValidator(
     regex=r'^\d{10}$',
@@ -16,34 +12,16 @@ phone_validator = RegexValidator(
 )
 
 class TeacherSerializer(serializers.ModelSerializer):
-<<<<<<< HEAD
     username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
     email = serializers.EmailField(source='user.email')
     phone_number = serializers.CharField(validators=[phone_validator], source='user.phone_number')
 
-    def validate_password(self, value):
-        try:
-            validate_password(value)  
-        except DjangoValidationError as e:
-            raise serializers.ValidationError(e.messages)
-        return value
-        
     class Meta:
         model = Teacher
         fields = [
             'id',
             'username',
-=======
-    username = serializers.CharField(write_only=True) 
-    password = serializers.CharField(write_only=True)
-    phone_number = serializers.CharField(validators=[phone_validator])
-
-    class Meta:
-        model = Teacher
-        fields = [
-            'username',            
->>>>>>> 52dd3ed4 (first commit)
             'first_name',
             'last_name',
             'email',
@@ -55,7 +33,13 @@ class TeacherSerializer(serializers.ModelSerializer):
             'password',
         ]
 
-<<<<<<< HEAD
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(e.messages)
+        return value
+
     def validate(self, data):
         email = data.get('user', {}).get('email')
         username = data.get('username')
@@ -84,10 +68,8 @@ class TeacherSerializer(serializers.ModelSerializer):
 
         return data
 
-
-
     def create(self, validated_data):
-        user_data=validated_data.pop('user')
+        user_data = validated_data.pop('user')
         username = validated_data.pop('username')
         password = validated_data.pop('password')
         email = user_data.get('email')
@@ -134,20 +116,3 @@ class TeacherSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-
-=======
-    def create(self, validated_data):
-        uname = validated_data.pop('username')
-        pwd   = validated_data.pop('password')
-        teacher = Teacher.objects.create(**validated_data)
-
-       
-        CustomUser.objects.create_user(
-            username=uname,
-            email=teacher.email,
-            password=pwd,
-            role='Teacher'
-        )
-
-        return teacher
->>>>>>> 52dd3ed4 (first commit)
