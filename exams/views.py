@@ -45,19 +45,26 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        exam_id = self.request.query_params.get('exam')  
+        exam_id = self.request.query_params.get('exam')  # exam=3
+
         if user.role == 'Teacher':
             try:
                 teacher = Teacher.objects.get(user=user)
-                exams = Exam.objects.filter(teacher=teacher)
-                return Question.objects.filter(exam__in=exams)
+                if exam_id:
+                    return Question.objects.filter(exam__id=exam_id, exam__teacher=teacher)
+                else:
+                    exams = Exam.objects.filter(teacher=teacher)
+                    return Question.objects.filter(exam__in=exams)
             except Teacher.DoesNotExist:
                 return Question.objects.none()
+
         elif user.role == 'Student':
             if exam_id:
                 return Question.objects.filter(exam__id=exam_id)
             return Question.objects.none()
+
         return Question.objects.none()
+
 
     def get_serializer_class(self):
         user = self.request.user

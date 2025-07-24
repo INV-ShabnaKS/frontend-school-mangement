@@ -3,12 +3,12 @@ from users.models import CustomUser
 
 class Teacher(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='teacher_profile')
+
     STATUS_CHOICES = (
         ('Active', 'Active'),
         ('Inactive', 'Inactive'),
     )
 
-    
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     subject_specialization = models.CharField(max_length=100)

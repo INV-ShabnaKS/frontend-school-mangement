@@ -16,7 +16,6 @@ import csv
 class StudentViewSet(viewsets.ModelViewSet):
     serializer_class = StudentSerializer
     permission_classes = [IsAuthenticated]
-
     def get_queryset(self):
         user = self.request.user
         if user.role == 'Admin':
@@ -98,6 +97,7 @@ class StudentViewSet(viewsets.ModelViewSet):
 
         return response
 
+  
     @action(detail=False, methods=['post'], url_path='import-csv', parser_classes=[MultiPartParser])
     def import_csv(self, request):
         user = request.user

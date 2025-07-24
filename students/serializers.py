@@ -15,7 +15,7 @@ phone_validator = RegexValidator(
 class StudentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', write_only=True, required=True)
     password = serializers.CharField(write_only=True, required=True)
-    email = serializers.EmailField(source='user.email')
+    email = serializers.EmailField(source='user.email', read_only=False)
     phone_number = serializers.CharField(validators=[phone_validator], source='user.phone_number')
 
 
@@ -71,26 +71,3 @@ class StudentSerializer(serializers.ModelSerializer):
         student = Student.objects.create(user=user, **validated_data)
         return student
 
-    def update(self, instance, validated_data):
-        user_data = validated_data.pop('user', {})
-        user = instance.user
-
-        if 'username' in user_data:
-            new_username = user_data['username']
-            if CustomUser.objects.exclude(pk=user.pk).filter(username=new_username).exists():
-                raise serializers.ValidationError({'username': 'Username already in use.'})
-            user.username = new_username
-
-        if 'email' in validated_data:
-            new_email = validated_data['email']
-            if CustomUser.objects.exclude(pk=user.pk).filter(email=new_email).exists():
-                raise serializers.ValidationError({'email': 'Email already in use.'})
-            user.email = new_email
-
-        user.save()
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-
-        return instance

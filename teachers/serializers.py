@@ -6,7 +6,6 @@ from datetime import date
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 
-
 phone_validator = RegexValidator(
     regex=r'^\d{10}$',
     message="Phone number must be exactly 10 digits."
@@ -18,13 +17,6 @@ class TeacherSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
     phone_number = serializers.CharField(validators=[phone_validator], source='user.phone_number')
 
-    def validate_password(self, value):
-        try:
-            validate_password(value)  
-        except DjangoValidationError as e:
-            raise serializers.ValidationError(e.messages)
-        return value
-        
     class Meta:
         model = Teacher
         fields = [
@@ -40,6 +32,13 @@ class TeacherSerializer(serializers.ModelSerializer):
             'status',
             'password',
         ]
+
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(e.messages)
+        return value
 
     def validate(self, data):
         email = data.get('user', {}).get('email')
@@ -69,10 +68,8 @@ class TeacherSerializer(serializers.ModelSerializer):
 
         return data
 
-
-
     def create(self, validated_data):
-        user_data=validated_data.pop('user')
+        user_data = validated_data.pop('user')
         username = validated_data.pop('username')
         password = validated_data.pop('password')
         email = user_data.get('email')
@@ -119,4 +116,3 @@ class TeacherSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-
