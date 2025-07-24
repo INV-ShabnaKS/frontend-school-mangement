@@ -15,7 +15,7 @@ phone_validator = RegexValidator(
 class StudentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', write_only=True, required=True)
     password = serializers.CharField(write_only=True, required=True)
-    email = serializers.EmailField(source='user.email', write_only=True)
+    email = serializers.EmailField(source='user.email')
     phone_number = serializers.CharField(validators=[phone_validator], source='user.phone_number')
 
 

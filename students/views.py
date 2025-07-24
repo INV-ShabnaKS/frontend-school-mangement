@@ -98,7 +98,6 @@ class StudentViewSet(viewsets.ModelViewSet):
 
         return response
 
-    # ✅ CSV Import Functionality as @action
     @action(detail=False, methods=['post'], url_path='import-csv', parser_classes=[MultiPartParser])
     def import_csv(self, request):
         user = request.user
