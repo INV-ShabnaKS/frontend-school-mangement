@@ -7,17 +7,23 @@ const TeachersPage = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [nextPage, setNextPage] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
+
   const { register, handleSubmit, reset } = useForm();
 
-  const fetchTeachers = async () => {
+  const fetchTeachers = async (url = '/teachers/') => {
     try {
-      const res = await api.get('/teachers/');
-      setTeachers(res.data.results || res.data);
+      const res = await api.get(url);
+      setTeachers(res.data.results || res.data); 
+      setNextPage(res.data.next?.replace(api.defaults.baseURL, '') || null);
+      setPrevPage(res.data.previous?.replace(api.defaults.baseURL, '') || null);
     } catch (err) {
       console.error(err);
       setError('Failed to load teachers');
     }
   };
+
 
   useEffect(() => {
     fetchTeachers();
@@ -92,6 +98,13 @@ const TeachersPage = () => {
           </li>
         ))}
       </ul>
+      <div style={{ marginTop: '1rem' }}>
+        <button onClick={() => fetchTeachers(prevPage)} disabled={!prevPage}style={{ marginRight: '1rem' }}>
+          Previou</button>
+        <button onClick={() => fetchTeachers(nextPage)} disabled={!nextPage}>
+          Next</button>
+      </div>
+
 
       {selectedTeacher && (
         <div style={{ marginTop: '2rem', borderTop: '1px solid #ddd', paddingTop: '1rem' }}>

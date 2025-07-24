@@ -16,9 +16,10 @@ const Login = () => {
         handleSubmit,reset, 
         formState : {errors}
     } = useForm();
-   
+    const [loginError, setLoginError] = React.useState("");
     const navigate = useNavigate();
     const { login, auth } = useAuth();
+    
     const onSubmit = async(data) => {
         const result = await login(data.username, data.password);
 
@@ -26,7 +27,7 @@ const Login = () => {
             reset();
             navigate("/dashboard");
         } else {
-            alert(result.message);
+            setLoginError(result.message);
         }
 
         console.log("Submitted:", data);
@@ -40,12 +41,11 @@ const Login = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Login
                 </Typography>
-                <form onSubmit={handleSubmit(onSubmit)}autoComplete="off">
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <TextField
                         label="Username"
                         fullWidth
                         margin="normal"
-                        autoComplete="off"
                         {...register("username", { required: "Username is required" })}
                         error={!!errors.username}
                         helperText={errors.username?.message}
@@ -56,7 +56,6 @@ const Login = () => {
                         type="password"
                         fullWidth
                         margin="normal"
-                        autoComplete="new-password"
                         {...register("password", {
                             required: "Password is required",
                             minLength: {
@@ -66,6 +65,10 @@ const Login = () => {
                         })}
                         error={!!errors.password}
                         helperText={errors.password?.message}/>
+                    {loginError && (
+                        <Typography variant="body1" color="error" align="center" sx={{ mt: 2 }}>
+                            {loginError}
+                        </Typography>)}
 
                     <Button type="submit" variant="contained" fullWidth sx={{backgroundColor:"#080808"}}>Login</Button>
                 </form>
