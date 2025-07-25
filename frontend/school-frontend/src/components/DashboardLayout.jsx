@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const drawerWidth = 100;
+const drawerWidth = 140;
 
 const DashboardLayout = () => {
   const { logout } = useAuth();

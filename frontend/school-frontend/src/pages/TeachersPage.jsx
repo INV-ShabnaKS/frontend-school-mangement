@@ -10,8 +10,7 @@ const TeachersPage = () => {
   const [nextPage, setNextPage] = useState(null);
   const [prevPage, setPrevPage] = useState(null);
 
-  const { register, handleSubmit, reset } = useForm();
-
+  const { register, handleSubmit, reset, watch } = useForm();
   const fetchTeachers = async (url = '/teachers/') => {
     try {
       const res = await api.get(url);
@@ -29,6 +28,8 @@ const TeachersPage = () => {
     fetchTeachers();
   }, []);
 
+
+
   const handleClick = (teacher) => {
     setSelectedTeacher(teacher);
   };
@@ -38,11 +39,14 @@ const TeachersPage = () => {
       await api.post('/teachers/', data);
       reset();
       setShowForm(false);
+      setError('');
       fetchTeachers();
     } catch (err) {
-      console.error(err.response?.data || err.message);
-      setError('Failed to add teacher');
+        const errorData = err.response?.data;
+        const firstError = typeof errorData === 'object' ? Object.values(errorData)[0] : err.message;
+        setError(firstError || 'Failed to add teacher');
     }
+
   };
 
   return (
@@ -109,10 +113,12 @@ const TeachersPage = () => {
       {selectedTeacher && (
         <div style={{ marginTop: '2rem', borderTop: '1px solid #ddd', paddingTop: '1rem' }}>
           <h3>Teacher Details</h3>
+          <p><strong>ID:</strong> {selectedTeacher.id}</p>
           <p><strong>Name:</strong> {selectedTeacher.first_name} {selectedTeacher.last_name}</p>
           <p><strong>Email:</strong> {selectedTeacher.email}</p>
           <p><strong>Phone:</strong> {selectedTeacher.phone_number}</p>
           <p><strong>Subject:</strong> {selectedTeacher.subject_specialization}</p>
+          <p><strong>Employee ID:</strong> {selectedTeacher.employee_id}</p>
           <p><strong>Date of Joining:</strong> {selectedTeacher.date_of_joining}</p>
           <p><strong>Status:</strong> {selectedTeacher.status}</p>
         </div>
