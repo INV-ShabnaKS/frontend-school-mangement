@@ -150,6 +150,23 @@ const StudentsPage = () => {
           <p><strong>Admission Date:</strong> {selectedStudent.admission_date}</p>
           <p><strong>Status:</strong> {selectedStudent.status}</p>
           <p><strong>Assigned teacher ID:</strong> {selectedStudent.assigned_teacher}</p>
+          {(role === 'Admin' || role === 'Teacher') && selectedStudent && (
+            <button style={{ backgroundColor: 'red',color: 'white',border: 'none',padding: '0.5rem 1rem',marginTop: '1rem',
+              cursor: 'pointer',}}
+              onClick={async () => {
+                const confirmDelete = window.confirm('Are you sure you want to delete this student?');
+                if (!confirmDelete) return;
+
+                try {
+                  await api.delete(`/students/${selectedStudent.id}/`);
+                  setSelectedStudent(null);  
+                  fetchStudents(currentUrl); 
+                } catch (err) {
+                    console.error('Delete failed:', err.response?.data || err.message);
+                    alert('Failed to delete student');
+                }
+              }}>Delete Student</button>)}
+
         </div>
       )}
     </div>
